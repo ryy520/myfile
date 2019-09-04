@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Title</title>
+    <script type="text/javascript" src="/static/js/jquery-1.8.3.js"></script>
+    <script type="text/javascript">
+        /*<![CDATA[*/
+        $(function (){
+            var url = window.location.href;
+            var id =url.substring(url.lastIndexOf("=")+1);
+            var dept =0;
+            $('#btn').click(function(){
+                var id = $('#id').val();
+                var name = $('#name').val();
+                var age = $('#age').val();
+                var address = $('#address').val();
+                var deptId = $('#dept').val();
+                var urlparam = {name:name,age:age,address:address,deptId:deptId,id:id};
+                $.ajax({
+                    url: 'http://localhost:8080/updatePerson',
+                    type:'post',
+                    data:urlparam,
+                    success:function(result){
+                        if(result=='ok'){
+                            location.href='index.html';
+                        }
+                    }
+                })
+            });
+
+
+            $.ajax({
+                url:'http://localhost:8080/getPersonInfo?id='+id,
+                type:'POST',
+                async:false,
+                success:function(result){
+                    $('#id').val(result.id);
+                    $('#name').val(result.name);
+                    $('#age').val(result.age);
+                    $('#address').val(result.address);
+                    dept=result.dept.id;
+                }
+            });
+
+            $.ajax({
+                url:'http://localhost:8080/showDept',
+                type:'POST',
+                success:function(result){
+                    var html ='<option value="0">请选择</option>';
+                    for(var i = 0;i<result.length;i++){
+                        if(result[i].id==dept){
+                            html+='<option value="'+result[i].id+'" selected>'+result[i].deptName+'</option>';
+                        }else{
+                            html+='<option value="'+result[i].id+'">'+result[i].deptName+'</option>';
+                        }
+                    }
+                    $('#dept').html(html);
+                }
+            });
+        })
+        /*  ]]>*/
+    </script>
+</head>
+<body>
+<div>
+    <p>
+        编号:<input type="text" id="id" />
+    </p>
+    <p>
+        名称:<input type="text" id="name" />
+    </p>
+    <p>
+        年龄:<input type="text" id="age" />
+    </p>
+    <p>
+        地址:<input type="text" id="address" />
+    </p>
+    <p>
+        部门:<select id="dept">
+        <option value="0">请选择</option>
+    </select>
+    </p>
+    <input type="button" value="修改" id="btn" />
+</div>
+</body>
+</html>

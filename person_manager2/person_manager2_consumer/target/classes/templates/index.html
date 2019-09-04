@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Title</title>
+    <script type="text/javascript" src="/static/js/jquery-1.8.3.js"></script>
+    <script type="text/javascript">
+        /*<![CDATA[*/
+        $(function(){
+            mypage(1);
+            $.ajax({
+                url:'/showDept',
+                type:'POST',
+                success:function(result){
+                    var html ='<option value="0">请选择</option>';
+                    for(var i = 0;result.length>i;i++){
+                        html+='<option value="'+result[i].id+'">'+result[i].deptName+'</option>';
+                    }
+                    $('#dept').html(html);
+                }
+            });
+            $("#btn").click(function () {
+                mypage(1);
+            })
+        });
+
+        function mypage(index) {
+            var name =$('#name').val();
+            var dept = $('#dept').val();
+            var param = {"index":index,"name":name,"dept":dept};
+           $.ajax({
+               url:'/showPerson',
+               type:'POST',
+               data:param,
+               success:function (result) {
+                   var html='';
+                   for(var i =0;result.data.length>i;i++){
+                       var p = result.data[i];
+                        html+= '<tr><td>'+p.id+'</td><td>'+p.name+'</td><td>'+p.age+'</td><td>'+p.address+'</td><td>'+p.dept.deptName+'</td><td><a href="add.html">添加</a><a href="update.html?id='+p.id+'">修改</a><a href="javascript:del('+p.id+')">删除</a> </td> </tr>';
+                   }
+                   $('tbody').html(html);
+                   html='';
+                   html+='<a href="javascript:mypage(1)">首页</a>';
+                   html+='<a href="javascript:mypage('+(result.index-1)+')">上一页</a>';
+                   html+='<a href="javascript:mypage('+(result.index+1)+')">下一页</a>';
+                   html+='<a href="javascript:mypage('+(result.total)+')">末页</a>';
+                   $('#page').html(html);
+               }
+           });
+        }
+
+        function del(id) {
+            $.ajax({
+                url:'/deletePerson?id='+id,
+                type:'post',
+                success:function (result) {
+                    if(result=="ok"){
+                        mypage(1);
+                    }
+                }
+            })
+
+        }
+        /*  ]]>*/
+    </script>
+</head>
+<body>
+       <center>
+       <div>
+            <select id="dept">
+                <option value="0">请选择</option>
+            </select>
+            姓名关键字:<input type="text" id="name"/>
+            <input type="button" value="查询" id="btn"/>
+       </div>
+
+       <div>
+           <table>
+               <thead>
+                       <tr>
+                       <td>编号</td>
+                       <td>名称</td>
+                       <td>年龄</td>
+                       <td>地址</td>
+                       <td>部门</td>
+                       <td>操作</td>
+                       </tr>
+               </thead>
+               <tbody></tbody>
+           </table>
+       </div>
+       <div id="page"></div>
+       </center>
+</body>
+</html>
