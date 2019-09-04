@@ -1,7 +1,7 @@
 package com.zb.entity;
 
 import java.io.Serializable;
-
+//aa
 public class Dept implements Serializable {
     private Integer id;
     private String deptName;
