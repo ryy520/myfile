@@ -1,7 +1,7 @@
 package com.zb.entity;
 
 import java.io.Serializable;
-
+//修改
 public class Person implements Serializable {
     private Integer id;
     private String name;
